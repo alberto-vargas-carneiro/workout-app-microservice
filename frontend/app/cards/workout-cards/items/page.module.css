@@ -1,0 +1,15 @@
+.container {
+    margin-top: 10px;
+}
+
+.exercise_name {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    text-align: center;
+    align-items: center;
+    font-size: 1.3rem;
+}
+
+.exercise_name img {
+    border-radius: 15px;
+}

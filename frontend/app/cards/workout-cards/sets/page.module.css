@@ -1,0 +1,46 @@
+.sets {
+    display: grid;
+    grid-template-areas: "one two three";
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px 25px;
+    background-color: #141414;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.stats {
+    display: grid;
+    grid-template-areas: "one two three";
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px 25px 5px 25px;
+    font-size: 0.7rem;
+}
+
+.one {
+    grid-area: one;
+    text-align: left;
+}
+
+.two {
+    grid-area: two;
+    text-align: center;
+}
+
+.three {
+    grid-area: three;
+    text-align: right;
+}
+
+.rest {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #9e9e9e;
+    font-size: 0.9rem;
+}
+
+.line {
+    width: 30%;
+    margin: 10px auto;
+    border-bottom: #9e9e9e77 solid 1px;
+}

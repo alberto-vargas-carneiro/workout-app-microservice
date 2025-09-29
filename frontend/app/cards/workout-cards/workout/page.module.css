@@ -1,0 +1,23 @@
+.container {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 30px;
+    background-color: #A41618;
+    border-radius: 15px;
+    gap: 20px;
+}
+
+.text {
+    justify-self: center;
+    color: #fff;
+    font-weight: 600;
+}
+
+.date {
+    position: absolute;
+    color: #fff;
+    transform: translateX(50%);
+    right: 50%;
+    font-size: 0.8rem;
+    bottom: 7px;
+}

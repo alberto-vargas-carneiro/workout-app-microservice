@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    height: calc(100% + 20px);;
+    width: calc(100% + 20px);;
+    background-image: url('/imagemDeFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(8px);
+    z-index: -1;
+}
+
+.formContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    width: 70vw;
+    background-color: #ffffffe5;
+    color: #5c5c5c;
+    margin-bottom: 32px;
+    padding: 15px;
+    border-radius: 25px;
+    font-size: 20px;
+}
+
+.loginButton {
+    background-color: #A41618;
+    color: #e7e7e7;
+    width: 70vw;
+    padding: 15px;
+    border-radius: 25px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.eye {
+    position: absolute;
+    right: 30px;
+    top: 105px;
+    color: #5c5c5c;
+}
+
+.signUp {
+    color: #ffffff;
+    font-size: 16px;
+    margin: 20px;
+    cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+    .form {
+        width: 500px;
+    }
+
+    .loginButton {
+        width: 500px;
+    }
+}
