@@ -11,9 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alberto.user_service.clients.WorkoutClient;
 import com.alberto.user_service.dto.UserDTO;
 import com.alberto.user_service.dto.UserMinDTO;
 import com.alberto.user_service.dto.UserNewDTO;
+import com.alberto.user_service.dto.WorkoutMinDTO;
 import com.alberto.user_service.entities.Role;
 import com.alberto.user_service.entities.User;
 import com.alberto.user_service.projections.UserDetailsProjection;
@@ -37,6 +39,9 @@ public class UserService implements UserDetailsService {
 	@Autowired
 	@Lazy
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private WorkoutClient workoutClient;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -88,7 +93,25 @@ public class UserService implements UserDetailsService {
 	@Transactional(readOnly = true)
 	public UserDTO getMe() {
 		User user = authenticated();
-		return new UserDTO(user);
+		
+		UserDTO userDTO = new UserDTO(user);
+		
+		try {
+			List<WorkoutMinDTO> workouts = workoutClient.findByUserId(user.getId());
+			
+			if (workouts != null && !workouts.isEmpty()) {
+				
+				for (WorkoutMinDTO workoutMin : workouts) {
+					userDTO.getWorkouts().add(workoutMin);
+				}
+			} else {
+				System.out.println("Nenhum workout encontrado para usuário ID: " + user.getId());
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar workouts para usuário ID " + user.getId() + ": " + e.getMessage());
+		}
+
+		return userDTO;
 	}
 
 	@Transactional(readOnly = true)
