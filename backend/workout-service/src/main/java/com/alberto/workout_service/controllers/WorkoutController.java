@@ -1,6 +1,7 @@
 package com.alberto.workout_service.controllers;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.alberto.workout_service.dto.WorkoutDTO;
+import com.alberto.workout_service.dto.WorkoutMinDTO;
 import com.alberto.workout_service.services.WorkoutService;
 
 import jakarta.validation.Valid;
@@ -31,6 +33,13 @@ public class WorkoutController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<WorkoutDTO> findById(@PathVariable Long id) {
         WorkoutDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @GetMapping(value = "/user/{userId}")
+    public ResponseEntity<List<WorkoutMinDTO>> findByUserId(@PathVariable Long userId) {
+        List<WorkoutMinDTO> dto = service.findByUserId(userId);
         return ResponseEntity.ok(dto);
     }
 

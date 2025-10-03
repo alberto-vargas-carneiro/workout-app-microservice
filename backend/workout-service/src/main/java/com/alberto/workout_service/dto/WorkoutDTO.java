@@ -18,6 +18,9 @@ public class WorkoutDTO {
     @NotEmpty(message = "Deve ter pelo menos um exercício")
     private List<WorkoutItemDTO> workoutItems = new ArrayList<>();
 
+    public WorkoutDTO() {
+    }
+
     public WorkoutDTO(Long id, String name, Instant date) {
         this.id = id;
         this.name = name;

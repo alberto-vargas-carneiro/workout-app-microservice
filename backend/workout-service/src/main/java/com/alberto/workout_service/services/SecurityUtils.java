@@ -23,25 +23,20 @@ public class SecurityUtils {
             return null;
         }
         
-        // Para JWT tokens do Authorization Server
         if (authentication.getPrincipal() instanceof Jwt) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             
-            // Tenta primeiro o claim "sub" (padrão JWT)
             Object userIdClaim = jwt.getClaim("sub");
             if (userIdClaim != null) {
                 try {
                     return Long.parseLong(userIdClaim.toString());
                 } catch (NumberFormatException e) {
-                    // Se sub não for um número, ignora e continua
                 }
             }
             
-            // Se não encontrou no "sub", busca no "username" (email)
             Object usernameClaim = jwt.getClaim("username");
             if (usernameClaim != null) {
                 String email = usernameClaim.toString();
-                // Faz chamada HTTP para o user-service para obter o ID
                 return getUserIdFromEmail(email);
             }
         }

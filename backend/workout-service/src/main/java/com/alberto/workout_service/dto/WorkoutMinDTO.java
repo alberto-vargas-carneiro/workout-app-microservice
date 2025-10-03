@@ -10,6 +10,9 @@ public class WorkoutMinDTO {
     private String name;
     private Instant date;
 
+    public WorkoutMinDTO() {
+    }
+
     public WorkoutMinDTO(Long id, String name, Instant date) {
         this.id = id;
         this.name = name;

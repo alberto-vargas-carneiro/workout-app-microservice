@@ -13,6 +13,9 @@ public class WorkoutItemDTO {
     private Integer weight;
     private String image;
 
+    public WorkoutItemDTO() {
+    }
+
     public WorkoutItemDTO(Long id, Long exerciseId, String exerciseName, Integer setNumber, String reps,
             Integer rest, Integer weight, String image) {
         this.id = id;

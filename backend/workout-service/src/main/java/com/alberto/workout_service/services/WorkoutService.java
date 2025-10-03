@@ -16,6 +16,7 @@ import com.alberto.workout_service.dto.ExerciseDTO;
 import com.alberto.workout_service.clients.ExerciseClient;
 import com.alberto.workout_service.dto.WorkoutDTO;
 import com.alberto.workout_service.dto.WorkoutItemDTO;
+import com.alberto.workout_service.dto.WorkoutMinDTO;
 import com.alberto.workout_service.entities.Workout;
 import com.alberto.workout_service.entities.WorkoutItem;
 import com.alberto.workout_service.repositories.WorkoutItemRepository;
@@ -46,7 +47,6 @@ public class WorkoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
         validateUser.validateSelfOrAdmin(workout.getUserId());
         
-        // Buscar dados dos exercícios via client
         WorkoutDTO resultDto = new WorkoutDTO(workout);
         for (WorkoutItemDTO itemDto : resultDto.getWorkoutItems()) {
             try {
@@ -54,11 +54,17 @@ public class WorkoutService {
                 itemDto.setExerciseName(exercise.getName());
                 itemDto.setImage(exercise.getImage());
             } catch (Exception e) {
-                // Log erro mas não quebra o fluxo se o microserviço de exercícios estiver indisponível
                 System.err.println("Erro ao buscar exercício " + itemDto.getExerciseId() + ": " + e.getMessage());
             }
         }
         return resultDto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkoutMinDTO> findByUserId(Long userId) {
+        List<Workout> workouts = repository.findByUserId(userId);
+        validateUser.validateSelfOrAdmin(userId);
+        return workouts.stream().map(WorkoutMinDTO::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -68,6 +74,7 @@ public class WorkoutService {
         entity.setDate(Instant.now());
         Long userId = SecurityUtils.getAuthenticatedUserId();
         entity.setUserId(userId);
+        
         for (WorkoutItemDTO workoutItemDto : dto.getWorkoutItems()) {
             WorkoutItem workoutItem = new WorkoutItem(
                     workoutItemDto.getId(),
@@ -89,7 +96,6 @@ public class WorkoutService {
                 itemDto.setExerciseName(exercise.getName());
                 itemDto.setImage(exercise.getImage());
             } catch (Exception e) {
-                // Log erro mas não quebra o fluxo se o microserviço de exercícios estiver indisponível
                 System.err.println("Erro ao buscar exercício " + itemDto.getExerciseId() + ": " + e.getMessage());
             }
         }
@@ -107,20 +113,29 @@ public class WorkoutService {
             throw new DatabaseException("Violação de integridade");
         }
     }
-
+    
     @Transactional
     public WorkoutDTO update(Long id, WorkoutDTO dto) {
         try {
+
             Workout entity = repository.getReferenceById(id);
+            validateUser.validateSelfOrAdmin(entity.getUserId());
+
             entity.setName(dto.getName());
+
             Map<Long, WorkoutItem> existingItemsMap = entity.getWorkoutItem().stream()
                     .collect(Collectors.toMap(WorkoutItem::getId, item -> item));
+
             List<WorkoutItem> updatedItems = new ArrayList<>();
+            
             for (WorkoutItemDTO itemDto : dto.getWorkoutItems()) {
+                
                 if (itemDto.getExerciseId() == null) {
                     throw new IllegalArgumentException("O campo exerciseId é obrigatório.");
                 }
+
                 WorkoutItem item;
+
                 if (itemDto.getId() != null && existingItemsMap.containsKey(itemDto.getId())) {
                     item = existingItemsMap.remove(itemDto.getId());
                     item.setExerciseId(itemDto.getExerciseId());
@@ -137,18 +152,22 @@ public class WorkoutService {
                     item.setRest(itemDto.getRest());
                     item.setWeight(itemDto.getWeight());
                 }
+
                 updatedItems.add(item);
             }
+            
+            // Remover itens excluídos
             for (WorkoutItem toRemove : existingItemsMap.values()) {
                 workoutItemRepository.delete(toRemove);
             }
+            
+            // Atualizar a lista de itens
             entity.getWorkoutItem().clear();
             entity.getWorkoutItem().addAll(updatedItems);
+
             entity = repository.save(entity);
             workoutItemRepository.saveAll(updatedItems);
-            validateUser.validateSelfOrAdmin(entity.getUserId());
             
-            // Buscar dados dos exercícios via client
             WorkoutDTO resultDto = new WorkoutDTO(entity);
             for (WorkoutItemDTO itemDto : resultDto.getWorkoutItems()) {
                 try {
@@ -156,7 +175,6 @@ public class WorkoutService {
                     itemDto.setExerciseName(exercise.getName());
                     itemDto.setImage(exercise.getImage());
                 } catch (Exception e) {
-                    // Log erro mas não quebra o fluxo se o microserviço de exercícios estiver indisponível
                     System.err.println("Erro ao buscar exercício " + itemDto.getExerciseId() + ": " + e.getMessage());
                 }
             }

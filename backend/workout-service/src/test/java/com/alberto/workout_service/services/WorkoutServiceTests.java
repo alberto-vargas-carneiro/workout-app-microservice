@@ -1,104 +1,112 @@
-// package com.alberto.workout_service.services;
+package com.alberto.workout_service.services;
 
-// import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
-// import java.time.Instant;
-// import java.util.Optional;
+import java.time.Instant;
+import java.util.Optional;
 
-// import org.junit.jupiter.api.Assertions;
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
-// import org.junit.jupiter.api.extension.ExtendWith;
-// import org.mockito.InjectMocks;
-// import org.mockito.Mock;
-// import org.mockito.Mockito;
-// import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-// import com.alberto.workout_service.dto.WorkoutDTO;
-// import com.alberto.workout_service.entities.Workout;
-// import com.alberto.workout_service.entities.WorkoutItem;
-// import com.alberto.workout_service.repositories.WorkoutItemRepository;
-// import com.alberto.workout_service.repositories.WorkoutRepository;
-// import com.alberto.workout_service.services.exceptions.ForbiddenException;
-// import com.alberto.workout_service.services.exceptions.ResourceNotFoundException;
+import com.alberto.workout_service.clients.ExerciseClient;
+import com.alberto.workout_service.dto.ExerciseDTO;
+import com.alberto.workout_service.dto.WorkoutDTO;
+import com.alberto.workout_service.entities.Workout;
+import com.alberto.workout_service.entities.WorkoutItem;
+import com.alberto.workout_service.repositories.WorkoutItemRepository;
+import com.alberto.workout_service.repositories.WorkoutRepository;
+import com.alberto.workout_service.services.exceptions.ForbiddenException;
+import com.alberto.workout_service.services.exceptions.ResourceNotFoundException;
 
-// @ExtendWith(SpringExtension.class)
-// public class WorkoutServiceTests {
+@ExtendWith(SpringExtension.class)
+public class WorkoutServiceTests {
 
-//     @InjectMocks
-//     private WorkoutService workoutService;
+    @InjectMocks
+    private WorkoutService workoutService;
 
-//     @Mock
-//     private WorkoutRepository workoutRepository;
+    @Mock
+    private WorkoutRepository workoutRepository;
 
-//     @Mock
-//     private WorkoutItemRepository workoutItemRepository;
+    @Mock
+    private WorkoutItemRepository workoutItemRepository;
 
-//     @Mock
-//     private ValidateUser validateUser;
+    @Mock
+    private ValidateUser validateUser;
 
-//     private Workout workout;
-//     private WorkoutDTO workoutDTO;
+    @Mock
+    private ExerciseClient exerciseClient;
 
-//     @BeforeEach
-//     public void setUp() {
-//         user = UserFactory.createClientUser(1L, "email@email.com");
-//         workout = new Workout(1L, "Morning Workout", Instant.now(), user);
+    private Workout workout;
+    private WorkoutDTO workoutDTO;
+    private Long userId;
 
-//         Mockito.when(workoutRepository.findById(1L)).thenReturn(Optional.of(workout));
-//     }
+    @BeforeEach
+    public void setUp() {
+        userId = 1L;
+        workout = new Workout(1L, "Morning Workout", Instant.now(), userId);
 
-//     @Test
-//     public void findById_ShouldReturnWorkoutDTO_WhenWorkoutExistsAndClientLogged() {
+        Mockito.when(workoutRepository.findById(1L)).thenReturn(Optional.of(workout));
+    }
 
-//         Mockito.doNothing().when(validateUser).validateSelfOrAdmin(any());
+    @Test
+    public void findById_ShouldReturnWorkoutDTO_WhenWorkoutExistsAndClientLogged() {
 
-//         WorkoutDTO result = workoutService.findById(1L);
+        Mockito.doNothing().when(validateUser).validateSelfOrAdmin(any());
 
-//         Assertions.assertNotNull(result);
-//         Assertions.assertEquals(workout.getId(), result.getId());
-//         Assertions.assertEquals(workout.getName(), result.getName());
-//         Assertions.assertEquals(workout.getDate(), result.getDate());
-//         Assertions.assertEquals(workout.getUser().getId(), result.getUser().getId());
-//     }
+        WorkoutDTO result = workoutService.findById(1L);
 
-//     @Test
-//     public void findById_ShouldThrowForbiddenException_WhenIdExistsAndOtherClientLogged() {
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(workout.getId(), result.getId());
+        Assertions.assertEquals(workout.getName(), result.getName());
+        Assertions.assertEquals(workout.getDate(), result.getDate());
+    }
 
-//         Mockito.doThrow(ForbiddenException.class).when(validateUser).validateSelfOrAdmin(any());
+    @Test
+    public void findById_ShouldThrowForbiddenException_WhenIdExistsAndOtherClientLogged() {
 
-//         Assertions.assertThrows(ForbiddenException.class, () -> {
-//             @SuppressWarnings("unused")
-//             WorkoutDTO result = workoutService.findById(1L);
-//         });
-//     }
+        Mockito.doThrow(ForbiddenException.class).when(validateUser).validateSelfOrAdmin(any());
 
-//     @Test
-//     public void findById_ShouldThrowResourceNotFoundException_WhenIdDoesNotExist() {
+        Assertions.assertThrows(ForbiddenException.class, () -> {
+            @SuppressWarnings("unused")
+            WorkoutDTO result = workoutService.findById(1L);
+        });
+    }
 
-//         Mockito.doNothing().when(validateUser).validateSelfOrAdmin(any());
+    @Test
+    public void findById_ShouldThrowResourceNotFoundException_WhenIdDoesNotExist() {
 
-//         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-//             @SuppressWarnings("unused")
-//             WorkoutDTO result = workoutService.findById(2L);
-//         });
-//     }
+        Mockito.doNothing().when(validateUser).validateSelfOrAdmin(any());
 
-//     @Test
-//     public void insert_ShouldInsertWorkout_WhenValidData() {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            @SuppressWarnings("unused")
+            WorkoutDTO result = workoutService.findById(2L);
+        });
+    }
 
-//         Exercise exercise = new Exercise(1L, "Push Up", "pushup.mp4");
-//         WorkoutItem workoutItem = new WorkoutItem(null, workout, exercise, 1, "3", 10, 10);
-//         workout.getWorkoutItem().add(workoutItem);
-//         workoutDTO = new WorkoutDTO(workout);
+    @Test
+    public void insert_ShouldInsertWorkout_WhenValidData() {
 
-//         Mockito.when(userService.authenticated()).thenReturn(user);
-//         Mockito.when(workoutRepository.save(any(Workout.class))).thenReturn(workout);
+        ExerciseDTO exerciseDTO = new ExerciseDTO("Push Up", "pushup.mp4");
+        WorkoutItem workoutItem = new WorkoutItem(null, workout, 1L, 1, "3", 10, 10);
+        workout.getWorkoutItem().add(workoutItem);
+        workoutDTO = new WorkoutDTO(workout);
 
-//         WorkoutDTO result = workoutService.insert(workoutDTO);
+        try (var mockedSecurityUtils = Mockito.mockStatic(SecurityUtils.class)) {
+            mockedSecurityUtils.when(SecurityUtils::getAuthenticatedUserId).thenReturn(userId);
+            Mockito.when(exerciseClient.findById(1L)).thenReturn(exerciseDTO);
+            Mockito.when(workoutRepository.save(any(Workout.class))).thenReturn(workout);
 
-//         Assertions.assertNotNull(result);
-//         Assertions.assertEquals(workoutDTO.getName(), result.getName());
-//         Assertions.assertEquals(user.getId(), result.getUser().getId());
-//     }
-// }
+            WorkoutDTO result = workoutService.insert(workoutDTO);
+
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(workoutDTO.getName(), result.getName());
+            Assertions.assertEquals(userId, workout.getUserId());
+        }
+    }
+}
