@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.alberto.exercise_service.dto.ExerciseDTO;
 import com.alberto.exercise_service.entities.Exercise;
 import com.alberto.exercise_service.repositories.ExerciseRepository;
+import com.alberto.exercise_service.services.exceptions.ResourceNotFoundException;
 
 @ExtendWith(SpringExtension.class)
 public class ExerciseServiceTests {
@@ -52,5 +53,28 @@ public class ExerciseServiceTests {
         Assertions.assertEquals(exercise.getName(), result.getContent().get(0).getName());
         Assertions.assertEquals(exercise.getImage(), result.getContent().get(0).getImage());
         Assertions.assertEquals(1L, result.getContent().get(0).getId());
+    }
+
+    @Test
+    public void findById_ShouldReturnExercise_WhenIdExists() {
+        Long existingId = 1L;
+
+        Mockito.when(exerciseRepository.findById(existingId)).thenReturn(java.util.Optional.of(exercise));
+
+        ExerciseDTO result = exerciseService.findById(existingId);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(exercise.getName(), result.getName());
+        Assertions.assertEquals(exercise.getImage(), result.getImage());
+        Assertions.assertEquals(1L, result.getId());
+    }
+
+    @Test
+    public void findById_ShouldThrowResourceNotFoundException_WhenIdDoesNotExist() {
+        Long nonExistingId = 100L;
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            exerciseService.findById(nonExistingId);
+        });
     }
 }
