@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from "axios";
-import { requestBackend } from "../utils/requests";
+import { requestWorkoutBackend } from "../utils/requests";
 import * as authService from "./auth-service";
 import { NewWorkoutDTO } from "../models/workout";
 
@@ -14,7 +14,7 @@ export function getWorkoutById(id: number) {
         headers
     }
 
-    return requestBackend(config);
+    return requestWorkoutBackend(config);
 }
 
 export function newWorkout(workout: NewWorkoutDTO) {
@@ -30,7 +30,7 @@ export function newWorkout(workout: NewWorkoutDTO) {
         headers
     }
 
-    return requestBackend(config);
+    return requestWorkoutBackend(config);
 
 }
 
@@ -47,6 +47,6 @@ export function updateWorkout(id: number, workout: NewWorkoutDTO) {
         headers
     }
 
-    return requestBackend(config);
+    return requestWorkoutBackend(config);
 
 }

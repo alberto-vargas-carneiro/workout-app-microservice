@@ -21,7 +21,7 @@ interface WorkoutItemDTO {
   reps: string;
   rest: number;
   weight: number;
-  video: string;
+  image: string;
 }
 
 interface GroupedWorkout {
@@ -39,7 +39,7 @@ interface WorkoutFullDTO {
 interface Exercise {
   id: number;
   name: string;
-  video: string;
+  image: string;
 }
 
 export default function WorkoutDetailsPage() {
@@ -102,7 +102,7 @@ export default function WorkoutDetailsPage() {
             reps: '12',
             rest: 60,
             weight: 0,
-            video: exercise.video,
+            image: exercise.image,
           }
         ]
       }
@@ -139,7 +139,7 @@ export default function WorkoutDetailsPage() {
         reps: '12',
         rest: 60,
         weight: 0,
-        video: group.sets[0].video
+        image: group.sets[0].image
       };
       return { ...group, sets: [...group.sets, newSet] };
     }));
@@ -233,7 +233,7 @@ export default function WorkoutDetailsPage() {
         {groupedItems.map((group, gIndex) => (
           <div key={group.exerciseName} className={style.exercise_group}>
             <div className={style.exercise_header}>
-              <WorkoutItemsCard name={group.exerciseName} video={group.sets[0].video} />
+              <WorkoutItemsCard name={group.exerciseName} image={group.sets[0].image} />
               {isEditing && (
                 <button
                   className={style.remove_exercise_button}
@@ -243,7 +243,7 @@ export default function WorkoutDetailsPage() {
               )}
             </div>
             {group.sets.map((set, sIndex) => (
-              <div key={set.id}>
+              <div key={`${gIndex}-${sIndex}`}>
                 {isEditing ? (
                   <>
                     <div className={style.sets_header}>

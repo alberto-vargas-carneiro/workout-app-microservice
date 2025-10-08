@@ -1,4 +1,4 @@
-import { requestBackend } from "../utils/requests";
+import { requestExerciseBackend } from "../utils/requests";
 import * as authService from "./auth-service";
 
 export function getExercises() {
@@ -7,5 +7,5 @@ export function getExercises() {
         Authorization: "Bearer " + authService.getAccessToken()
     }
 
-    return requestBackend({ url: "/exercises?sort=name", headers });
+    return requestExerciseBackend({ url: "/exercises?sort=name", headers });
 }

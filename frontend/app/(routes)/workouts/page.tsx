@@ -16,7 +16,6 @@ export default function WorkoutPage() {
     userService.findLoggedUser()
       .then(response => {
         setWorkouts(response.data.workouts);
-        console.log(response.data)
         setLoading(false);
       })
       .catch(error => {

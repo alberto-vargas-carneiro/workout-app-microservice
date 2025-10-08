@@ -12,7 +12,7 @@ export default function ExerciseCard({ exercise }: ExerciseCardProps) {
         <>
             <div className={style.container}>
                 <div>
-                    <Image className={style.image} src={exercise.video} width={65} height={65} alt='exercício' />
+                    <Image className={style.image} src={exercise.image} width={65} height={65} alt='exercício' />
                 </div>
                 <span className={style.text}>{exercise.name}</span>
             </div >

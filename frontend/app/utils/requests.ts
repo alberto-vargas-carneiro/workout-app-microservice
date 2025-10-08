@@ -1,6 +1,14 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { BASE_URL } from "./system";
+import { EXERCISE_URL, USER_URL, WORKOUT_URL } from "./system";
 
-export function requestBackend(config: AxiosRequestConfig) {
-    return axios({...config, baseURL: BASE_URL});
+export function requestExerciseBackend(config: AxiosRequestConfig) {
+    return axios({...config, baseURL: EXERCISE_URL});
+}
+
+export function requestWorkoutBackend(config: AxiosRequestConfig) {
+    return axios({...config, baseURL: WORKOUT_URL});
+}
+
+export function requestUserBackend(config: AxiosRequestConfig) {
+    return axios({...config, baseURL: USER_URL});
 }

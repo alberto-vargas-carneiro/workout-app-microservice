@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from "axios";
 import QueryString from "qs";
 import { CredentialsDTO, UserDTO } from "../models/auth";
 import { CLIENT_ID, CLIENT_SECRET } from "../utils/system";
-import { requestBackend } from "../utils/requests";
+import { requestUserBackend } from "../utils/requests";
 import * as accessTokenRepository from "../localstorage/access-token-repository";
 
 export function loginRequest(loginData: CredentialsDTO) {
@@ -21,7 +21,7 @@ export function loginRequest(loginData: CredentialsDTO) {
         headers
     }
 
-    return requestBackend(config);
+    return requestUserBackend(config);
 }
 
 export function newUser(loginData: UserDTO) {
@@ -39,7 +39,7 @@ export function newUser(loginData: UserDTO) {
         headers
     }
 
-    return requestBackend(config);
+    return requestUserBackend(config);
 }
 
 export function logout() {

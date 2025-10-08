@@ -1,4 +1,4 @@
-import { requestBackend } from "../utils/requests";
+import { requestUserBackend } from "../utils/requests";
 import * as authService from "./auth-service";
 
 export function findLoggedUser() {
@@ -7,5 +7,5 @@ export function findLoggedUser() {
         Authorization: "Bearer " + authService.getAccessToken()
     }
 
-    return requestBackend({ url: "/users/me", headers });
+    return requestUserBackend({ url: "/users/me", headers });
 }

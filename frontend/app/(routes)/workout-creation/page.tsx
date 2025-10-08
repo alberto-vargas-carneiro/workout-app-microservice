@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 interface Exercise {
     id: number;
     name: string;
-    video: string;
+    image: string;
 }
 
 interface WorkoutItem {
@@ -99,7 +99,7 @@ export default function WorkoutCreation() {
             <div className={style.items_container}>
                 <h2>Escolha os Exercícios</h2>
                 {exercises.map((exercise) => (
-                    <>
+                    <div key={exercise.id}>
                         <div className={style.exercise_container}>
                             <div
                                 className={style.exercise_card}
@@ -151,7 +151,7 @@ export default function WorkoutCreation() {
                             ))}
 
                         </div>
-                    </>
+                    </div>
                 ))}
             </div>
 
