@@ -86,8 +86,9 @@ public class WorkoutService {
                     workoutItemDto.getWeight());
             entity.getWorkoutItem().add(workoutItem);
         }
-        repository.save(entity);
-        workoutItemRepository.saveAll(entity.getWorkoutItem());
+        
+        // Salvar apenas a entidade principal - o cascade cuida dos itens
+        entity = repository.save(entity);
         
         WorkoutDTO resultDto = new WorkoutDTO(entity);
         for (WorkoutItemDTO itemDto : resultDto.getWorkoutItems()) {
@@ -117,25 +118,26 @@ public class WorkoutService {
     @Transactional
     public WorkoutDTO update(Long id, WorkoutDTO dto) {
         try {
-
             Workout entity = repository.getReferenceById(id);
             validateUser.validateSelfOrAdmin(entity.getUserId());
 
             entity.setName(dto.getName());
 
+            // Criar mapa dos itens existentes
             Map<Long, WorkoutItem> existingItemsMap = entity.getWorkoutItem().stream()
                     .collect(Collectors.toMap(WorkoutItem::getId, item -> item));
 
+            // Lista para os itens que serão mantidos/atualizados
             List<WorkoutItem> updatedItems = new ArrayList<>();
             
             for (WorkoutItemDTO itemDto : dto.getWorkoutItems()) {
-                
                 if (itemDto.getExerciseId() == null) {
                     throw new IllegalArgumentException("O campo exerciseId é obrigatório.");
                 }
 
                 WorkoutItem item;
 
+                // Se é um item existente, atualiza
                 if (itemDto.getId() != null && existingItemsMap.containsKey(itemDto.getId())) {
                     item = existingItemsMap.remove(itemDto.getId());
                     item.setExerciseId(itemDto.getExerciseId());
@@ -144,6 +146,7 @@ public class WorkoutService {
                     item.setRest(itemDto.getRest());
                     item.setWeight(itemDto.getWeight());
                 } else {
+                    // Se é um item novo, cria
                     item = new WorkoutItem();
                     item.setWorkout(entity);
                     item.setExerciseId(itemDto.getExerciseId());
@@ -156,17 +159,18 @@ public class WorkoutService {
                 updatedItems.add(item);
             }
             
-            // Remover itens excluídos
+            // Remover itens que não estão mais na lista (foram excluídos)
             for (WorkoutItem toRemove : existingItemsMap.values()) {
+                entity.getWorkoutItem().remove(toRemove);
                 workoutItemRepository.delete(toRemove);
             }
             
-            // Atualizar a lista de itens
+            // Limpar e adicionar todos os itens atualizados
             entity.getWorkoutItem().clear();
             entity.getWorkoutItem().addAll(updatedItems);
 
+            // Salvar apenas a entidade principal - o cascade cuida dos itens
             entity = repository.save(entity);
-            workoutItemRepository.saveAll(updatedItems);
             
             WorkoutDTO resultDto = new WorkoutDTO(entity);
             for (WorkoutItemDTO itemDto : resultDto.getWorkoutItems()) {

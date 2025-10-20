@@ -1,4 +1,4 @@
-package com.alberto.user_service.config;
+package com.alberto.exercise_service.config;
 
 import java.util.Arrays;
 
@@ -12,6 +12,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,6 +29,9 @@ public class ResourceServerConfig {
 
 	@Value("${cors.origins}")
 	private String corsOrigins;
+
+	@Value("${security.oauth2.authorizationserver.jwk-set-uri:http://localhost:8082/oauth2/jwks}")
+	private String jwkSetUri;
 
 	@Bean
 	@Profile("test")
@@ -76,9 +81,13 @@ public class ResourceServerConfig {
 		return source;
 	}
 
-	@Bean
-	CorsFilter corsFilter() {
+    @Bean
+    CorsFilter corsFilter() {
 		return new CorsFilter(corsConfigurationSource());
 	}
 
+	@Bean
+	public JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+	}
 }
