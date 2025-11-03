@@ -1,0 +1,82 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_EXERCISE_URL=http://localhost:8080
+      - NEXT_PUBLIC_WORKOUT_URL=http://localhost:8081
+      - NEXT_PUBLIC_USER_URL=http://localhost:8082
+    networks:
+      - netApp
+
+  user-service:
+    build: ./backend/user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - netApp
+  exercise-service:
+    build: ./backend/exercise-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SECURITY_OAUTH2_AUTHORIZATIONSERVER_JWK_SET_URI: http://user-service:8082/oauth2/jwks
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/exercisedb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - netApp
+  workout-service:
+    build: ./backend/workout-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SECURITY_OAUTH2_AUTHORIZATIONSERVER_JWK_SET_URI: http://user-service:8082/oauth2/jwks
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/workoutdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - netApp
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      # Optional: set a default DB; we'll create the app DBs in the init script
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backend/db-init:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+    networks:
+      - netApp
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - netApp
+networks:
+  netApp:
+    driver: bridge
+
+volumes:
+  postgres-data:

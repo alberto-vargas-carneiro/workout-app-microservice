@@ -35,7 +35,8 @@ export default function SignUp() {
                 }, 750);
             })
             .catch(error => {
-                console.log('Erro:', error.response.data)
+                const payload = error?.response?.data ?? error?.message ?? error;
+                console.log('Erro:', payload);
             })
     }
 
