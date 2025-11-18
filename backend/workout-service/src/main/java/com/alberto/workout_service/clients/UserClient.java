@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alberto.workout_service.dto.UserDTO;
 
-@FeignClient(name = "user-service", url = "http://localhost:8082", configuration = com.alberto.workout_service.config.FeignConfig.class)
+@FeignClient(name = "user-service", url = "http://user-service:8082", configuration = com.alberto.workout_service.config.FeignConfig.class)
 public interface UserClient {
     
     @GetMapping("/users/email")

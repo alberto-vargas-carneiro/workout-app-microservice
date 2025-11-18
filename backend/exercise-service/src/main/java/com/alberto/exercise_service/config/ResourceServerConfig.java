@@ -30,7 +30,7 @@ public class ResourceServerConfig {
 	@Value("${cors.origins}")
 	private String corsOrigins;
 
-	@Value("${security.oauth2.authorizationserver.jwk-set-uri:http://localhost:8082/oauth2/jwks}")
+	@Value("${security.oauth2.authorizationserver.jwk-set-uri:http://user-service:8082/oauth2/jwks}")
 	private String jwkSetUri;
 
 	@Bean

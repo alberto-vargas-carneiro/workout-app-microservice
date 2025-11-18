@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.alberto.workout_service.dto.ExerciseDTO;
 
-@FeignClient(name = "exercise-service", url = "http://localhost:8080", configuration = com.alberto.workout_service.config.FeignConfig.class)
+@FeignClient(name = "exercise-service", url = "http://exercise-service:8080", configuration = com.alberto.workout_service.config.FeignConfig.class)
 public interface ExerciseClient {
     
     @GetMapping("/exercises/{id}")

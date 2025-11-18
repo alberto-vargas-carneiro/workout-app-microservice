@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.alberto.user_service.dto.WorkoutMinDTO;
 
-@FeignClient(name = "workout-service", url = "http://localhost:8081")
+@FeignClient(name = "workout-service", url = "http://workout-service:8081")
 public interface WorkoutClient {
     
     @GetMapping("/workouts/user/{userId}")
