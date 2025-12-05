@@ -24,7 +24,7 @@
     font-size: 16px;
 }
 
-.edit_button {
+.edit_button, .delete_button {
     position: absolute;
     right: 30px;
     top: 30px;
@@ -34,7 +34,12 @@
     cursor: pointer;
 }
 
-.save_button {
+.delete_button {
+    right: 70px;
+    font-size: 18px;
+}
+
+.save_button, .add_exercise_button, .cancel_button {
     background-color: #000000;
     color: #ffffff;
     padding: 10px 20px;
@@ -46,19 +51,22 @@
 .add_exercise_button {
     background-color: #ffffff;
     color: #000000;
-    padding: 10px 20px;
-    border-radius: 15px;
-    cursor: pointer;
     margin-top: 20px;
 }
 
 .cancel_button {
     background-color: #ff0000;
-    color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 15px;
-    cursor: pointer;
     margin: 20px;
+}
+
+.remove_exercise_button {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    color: #a1a1a1;
+    background-color: #00000000;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
 
 .arrow {
@@ -71,16 +79,6 @@
 
 .exercise_header {
     position: relative;
-}
-
-.remove_exercise_button {
-    position: absolute;
-    right: 0;
-    top: 20px;
-    color: #a1a1a1;
-    background-color: #00000000;
-    font-size: 1.2rem;
-    cursor: pointer;
 }
 
 .items_container {

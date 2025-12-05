@@ -50,3 +50,17 @@ export function updateWorkout(id: number, workout: NewWorkoutDTO) {
     return requestWorkoutBackend(config);
 
 }
+
+export function deleteWorkout(id: number) {
+    const headers = {
+        Authorization: "Bearer " + authService.getAccessToken()
+    }
+
+    const config: AxiosRequestConfig = {
+        method: "DELETE",
+        url: `/workouts/${id}`,
+        headers
+    }
+
+    return requestWorkoutBackend(config);
+}

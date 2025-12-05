@@ -10,8 +10,10 @@ import { useEffect, useState } from 'react';
 import { FaArrowLeft } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { RiPencilFill } from "react-icons/ri";
+import { FaTrash } from "react-icons/fa";
 import style from './page.module.css';
 import ExerciseCard from '@/app/cards/exercise-card/page';
+import { useRouter } from "next/navigation";
 
 interface WorkoutItemDTO {
   id?: number;
@@ -51,6 +53,7 @@ export default function WorkoutDetailsPage() {
   const [newSetCounter, setNewSetCounter] = useState<number>(-1);
   const [showExerciseList, setShowExerciseList] = useState(false);
   const [availableExercises, setAvailableExercises] = useState<Exercise[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (id) {
@@ -180,6 +183,16 @@ export default function WorkoutDetailsPage() {
 
   if (loading) return <div>Carregando...</div>;
 
+  function handleDelete(id: number): void {
+    workoutService.deleteWorkout(id)
+      .then(() => {
+        router.push('/workouts');
+      })
+      .catch(error => {
+        console.error('Erro ao deletar o treino:', error);
+      });
+  }
+
   return (
     <div className={style.container}>
       <div className={style.title}>
@@ -206,6 +219,9 @@ export default function WorkoutDetailsPage() {
         ) : (
           <h1>{workoutName}</h1>
         )}
+        <button className={style.delete_button} onClick={() => handleDelete(Number(id))}>
+          <FaTrash />
+        </button>
         <button className={style.edit_button} onClick={() => setIsEditing(!isEditing)}>
           {!isEditing && <RiPencilFill />}
         </button>
@@ -230,81 +246,81 @@ export default function WorkoutDetailsPage() {
 
       <div className={style.items_container}>
         <div className={style.exercise_container}>
-        {groupedItems.map((group, gIndex) => (
-          <div key={group.exerciseName} className={style.exercise_group}>
-            <div className={style.exercise_header}>
-              <WorkoutItemsCard name={group.exerciseName} image={group.sets[0].image} />
-              {isEditing && (
-                <button
-                  className={style.remove_exercise_button}
-                  onClick={() => handleRemoveExercise(gIndex)}>
-                  <FaRegTrashAlt />
-                </button>
-              )}
-            </div>
-            {group.sets.map((set, sIndex) => (
-              <div key={`${gIndex}-${sIndex}`}>
-                {isEditing ? (
-                  <>
-                    <div className={style.sets_header}>
-                      <div>SÉRIE</div>
-                      <div>PESO</div>
-                      <div>REPS</div>
-                      <div>DESCANSO</div>
-                    </div>
-
-                    <div className={style.sets}>
-                      <input
-                        type="number"
-                        value={set.setNumber}
-                        onChange={e => handleSetChange(gIndex, sIndex, 'setNumber', parseInt(e.target.value))}
-                        placeholder="Série"
-                      />
-                      <input
-                        type="number"
-                        value={set.weight ?? ''}
-                        onChange={e => handleSetChange(gIndex, sIndex, 'weight', parseInt(e.target.value))}
-                        placeholder="Peso"
-                      />
-                      <input
-                        type="text"
-                        value={set.reps}
-                        onChange={e => handleSetChange(gIndex, sIndex, 'reps', e.target.value)}
-                        placeholder="Reps"
-                      />
-                      <input
-                        type="number"
-                        value={set.rest}
-                        onChange={e => handleSetChange(gIndex, sIndex, 'rest', parseInt(e.target.value))}
-                        placeholder="Descanso"
-                      />
-                    </div>
-
-                    {isEditing && sIndex === group.sets.length - 1 && (
-                      <div className={style.add_remove_buttons}>
-                        {group.sets.length > 1 && (
-                          <button
-                            className={style.remove_button}
-                            onClick={() => handleRemoveSet(gIndex, sIndex)}>
-                            x
-                          </button>
-                        )}
-                        <button
-                          className={style.add_button}
-                          onClick={() => handleAddSet(gIndex)}>
-                          +
-                        </button>
-                      </div>
-                    )}
-
-                  </>
-                ) : (
-                  <SetsCard set={set.setNumber} weight={set.weight} reps={set.reps} rest={set.rest} />
+          {groupedItems.map((group, gIndex) => (
+            <div key={group.exerciseName} className={style.exercise_group}>
+              <div className={style.exercise_header}>
+                <WorkoutItemsCard name={group.exerciseName} image={group.sets[0].image} />
+                {isEditing && (
+                  <button
+                    className={style.remove_exercise_button}
+                    onClick={() => handleRemoveExercise(gIndex)}>
+                    <FaRegTrashAlt />
+                  </button>
                 )}
               </div>
-            ))}
-          </div>
-        ))}
+              {group.sets.map((set, sIndex) => (
+                <div key={`${gIndex}-${sIndex}`}>
+                  {isEditing ? (
+                    <>
+                      <div className={style.sets_header}>
+                        <div>SÉRIE</div>
+                        <div>PESO</div>
+                        <div>REPS</div>
+                        <div>DESCANSO</div>
+                      </div>
+
+                      <div className={style.sets}>
+                        <input
+                          type="number"
+                          value={set.setNumber}
+                          onChange={e => handleSetChange(gIndex, sIndex, 'setNumber', parseInt(e.target.value))}
+                          placeholder="Série"
+                        />
+                        <input
+                          type="number"
+                          value={set.weight ?? ''}
+                          onChange={e => handleSetChange(gIndex, sIndex, 'weight', parseInt(e.target.value))}
+                          placeholder="Peso"
+                        />
+                        <input
+                          type="text"
+                          value={set.reps}
+                          onChange={e => handleSetChange(gIndex, sIndex, 'reps', e.target.value)}
+                          placeholder="Reps"
+                        />
+                        <input
+                          type="number"
+                          value={set.rest}
+                          onChange={e => handleSetChange(gIndex, sIndex, 'rest', parseInt(e.target.value))}
+                          placeholder="Descanso"
+                        />
+                      </div>
+
+                      {isEditing && sIndex === group.sets.length - 1 && (
+                        <div className={style.add_remove_buttons}>
+                          {group.sets.length > 1 && (
+                            <button
+                              className={style.remove_button}
+                              onClick={() => handleRemoveSet(gIndex, sIndex)}>
+                              x
+                            </button>
+                          )}
+                          <button
+                            className={style.add_button}
+                            onClick={() => handleAddSet(gIndex)}>
+                            +
+                          </button>
+                        </div>
+                      )}
+
+                    </>
+                  ) : (
+                    <SetsCard set={set.setNumber} weight={set.weight} reps={set.reps} rest={set.rest} />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div >
