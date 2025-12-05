@@ -41,7 +41,7 @@
 }
 
 .loginButton {
-    background-color: #A41618;
+    background-color: var(--primary-color);
     color: #e7e7e7;
     width: 70vw;
     padding: 15px;

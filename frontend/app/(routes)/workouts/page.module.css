@@ -27,7 +27,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #A41618;
+    background-color: var(--primary-color);
     border-radius: 50%;
     color: #ffffff;
     height: 65px;
@@ -43,7 +43,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #A41618;
+    background-color: var(--primary-color);
     border-radius: 50%;
     color: #ffffff;
     height: 65px;
