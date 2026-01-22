@@ -32,15 +32,15 @@ docker compose up --build
 
 ## 🔑 Credenciais
 ### PostgreSQL
-Host: postgres
-Port: 5432
-User: postgres
-Password: postgres
-Database: workout
+- Host: postgres
+- Port: 5432
+- User: postgres
+- Password: postgres
+- Database: workout
 
 ### pgAdmin
-Email: admin@admin.com
-Senha: admin
+- Email: admin@admin.com
+- Senha: admin
 
 #### Conectar o PostgreSQL no pgAdmin
 
@@ -60,9 +60,12 @@ Após logar, adicione um novo servidor:
 
 Para parar todos os containers:
 
+```bash
 docker compose down
-
+```
 
 Para parar e remover volumes (isso apaga o banco):
 
+```bash
 docker compose down -v
+```
