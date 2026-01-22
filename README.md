@@ -21,6 +21,21 @@ Antes de rodar o projeto, instale:
 
 ---
 
+## 📁 Estrutura do Projeto
+O repositório deve conter algo como:
+
+```bash
+/
+  docker-compose.yml
+  /frontend/
+  /backend/
+      /user-service/
+      /exercise-service/
+      /workout-service/
+```
+
+---
+
 ## ▶️ Como Executar
 
 No diretório raiz, execute:
